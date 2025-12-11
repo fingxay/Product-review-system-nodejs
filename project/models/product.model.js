@@ -22,13 +22,22 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
+    // ⭐ HÌNH ẢNH SẢN PHẨM
+    image: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    // ⭐ ĐIỂM TRUNG BÌNH (tính từ bảng review)
     averageRating: {
       type: Number,
-      default: 0, // sẽ được cập nhật sau dựa trên reviews
+      default: 0,
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // tự tạo createdAt & updatedAt
   }
 );
 
