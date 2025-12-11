@@ -7,6 +7,7 @@ const app = express();
 
 const authRoutes = require("./routers/auth.routes");
 const productRoutes = require("./routers/product.routes");
+const reviewRoutes = require("./routers/review.routes");
 
 // middlewares
 app.use(helmet());
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 
 // connect DB
