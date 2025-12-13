@@ -22,6 +22,9 @@ form.addEventListener("submit", async (e) => {
 
     msg.style.color = "green";
     msg.textContent = "Đăng ký thành công! Chuyển sang đăng nhập.";
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 500);
   } catch (err) {
     msg.style.color = "red";
     msg.textContent = err.message || "Đăng ký thất bại";

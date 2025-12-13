@@ -1,19 +1,47 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.JWT_SECRET;
+/**
+ * Secrets
+ */
+const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET;
 
-function generateToken(payload) {
-  return jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
+/**
+ * Expire time
+ */
+const ACCESS_TOKEN_EXPIRES = "15m";   // ngắn hạn
+const REFRESH_TOKEN_EXPIRES = "7d";   // dài hạn
+
+/**
+ * ===== ACCESS TOKEN =====
+ */
+function generateAccessToken(payload) {
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+    expiresIn: ACCESS_TOKEN_EXPIRES,
+  });
 }
 
-function verifyToken(token) {
-  try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    return { valid: true, decoded };
-  } catch (err) {
-    return { valid: false, error: err };
-  }
+function verifyAccessToken(token) {
+  return jwt.verify(token, ACCESS_TOKEN_SECRET);
 }
 
-module.exports = { generateToken, verifyToken };
+/**
+ * ===== REFRESH TOKEN =====
+ */
+function generateRefreshToken(payload) {
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRES,
+  });
+}
+
+function verifyRefreshToken(token) {
+  return jwt.verify(token, REFRESH_TOKEN_SECRET);
+}
+
+module.exports = {
+  generateAccessToken,
+  verifyAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+};

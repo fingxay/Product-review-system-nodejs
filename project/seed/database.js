@@ -27,7 +27,7 @@ async function buildUsers() {
     {
       _id: adminId,
       username: "admin",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       passwordHash: adminPwd,
       role: "admin",
     },
@@ -37,7 +37,7 @@ async function buildUsers() {
     users.push({
       _id: userIds[i],
       username: `user${i + 1}`,
-      email: `user${i + 1}@example.com`,
+      email: `user${i + 1}@gmail.com`,
       passwordHash: await hashPassword("user123"),
       role: "user",
     });

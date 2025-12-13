@@ -8,22 +8,34 @@ form.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  msg.style.color = "#333";
+  msg.textContent = "Đang đăng nhập...";
+
   try {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // ⭐ BẮT BUỘC để nhận cookie
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data.message);
+    if (!res.ok) {
+      throw new Error(data.message || "Đăng nhập thất bại");
+    }
 
-    localStorage.setItem("token", data.token);
     msg.style.color = "green";
     msg.textContent = "Đăng nhập thành công!";
+
+    // Redirect sau khi login
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 500);
   } catch (err) {
     msg.style.color = "red";
-    msg.textContent = err.message || "Đăng nhập thất bại";
+    msg.textContent = err.message || "Không thể kết nối server";
   }
 });

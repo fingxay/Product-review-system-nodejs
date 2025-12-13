@@ -1,12 +1,91 @@
 const AuthService = require("../services/auth.service");
+const { verifyRefreshToken, generateAccessToken } = require("../utils/jwt");
 const catchAsync = require("../utils/catchAsync");
 
+const isProd = process.env.NODE_ENV === "production";
+
+/**
+ * REGISTER
+ */
 exports.register = catchAsync(async (req, res) => {
   const result = await AuthService.register(req.body);
-  res.json(result);
+
+  res.json({
+    success: true,
+    message: result.message,
+  });
 });
 
+/**
+ * LOGIN
+ */
 exports.login = catchAsync(async (req, res) => {
-  const result = await AuthService.login(req.body);
-  res.json(result);
+  const { accessToken, refreshToken } = await AuthService.login(req.body);
+
+  /**
+   * ===== Set HTTP-Only Cookies =====
+   */
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: isProd,        // local = false, prod = true (https)
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000 // 15 phút
+  });
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
+  });
+
+  res.json({
+    success: true,
+    message: "Login success",
+  });
+});
+
+/**
+ * REFRESH ACCESS TOKEN
+ */
+exports.refresh = catchAsync(async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: "Refresh token missing",
+    });
+  }
+
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(refreshToken);
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired refresh token",
+    });
+  }
+
+  const payload = {
+    userId: decoded.userId,
+    email: decoded.email,
+    role: decoded.role,
+  };
+
+  const newAccessToken = generateAccessToken(payload);
+
+  // Set lại access token cookie
+  res.cookie("accessToken", newAccessToken, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000, // 15 phút
+  });
+
+  return res.json({
+    success: true,
+    message: "Access token refreshed",
+  });
 });

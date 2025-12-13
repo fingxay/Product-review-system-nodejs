@@ -1,6 +1,9 @@
 const User = require("../models/user.model");
 const { hashPassword, comparePassword } = require("../utils/hashing");
-const { generateToken } = require("../utils/jwt");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/jwt");
 
 class AuthService {
   static async register({ username, email, password }) {
@@ -12,11 +15,14 @@ class AuthService {
     const user = new User({
       username,
       email,
-      passwordHash
+      passwordHash,
     });
 
     await user.save();
-    return { message: "Register success" };
+
+    return {
+      message: "Register success",
+    };
   }
 
   static async login({ email, password }) {
@@ -26,13 +32,19 @@ class AuthService {
     const valid = await comparePassword(password, user.passwordHash);
     if (!valid) throw new Error("Wrong password");
 
-    const token = generateToken({
+    const payload = {
       userId: user._id,
       email: user.email,
       role: user.role,
-    });
+    };
 
-    return { token };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }
 

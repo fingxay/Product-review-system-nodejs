@@ -1,26 +1,30 @@
-const { verifyToken } = require("../utils/jwt");
+const { verifyAccessToken } = require("../utils/jwt");
 
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
+  // LẤY ACCESS TOKEN TỪ COOKIE
+  const token = req.cookies?.accessToken;
 
-  // Không có token
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized. No token provided." });
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized. Access token missing.",
+    });
   }
 
-  const token = authHeader.split(" ")[1];
+  try {
+    // VERIFY ACCESS TOKEN
+    const decoded = verifyAccessToken(token);
 
-  // Verify token
-  const { valid, decoded, error } = verifyToken(token);
+    // GẮN USER VÀO REQUEST
+    req.user = decoded;
 
-  if (!valid) {
-    return res.status(401).json({ message: "Invalid token", error });
+    return next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired access token",
+    });
   }
-
-  // Nếu token hợp lệ → gắn info user vào request
-  req.user = decoded;
-
-  next(); // cho phép đi tiếp vào controller
 }
 
 module.exports = authMiddleware;
