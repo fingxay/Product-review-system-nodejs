@@ -20,6 +20,7 @@
 body {
   background-color: var(--bg);
   color: var(--text);
+  padding-top: 74px;   /* chiều cao header */
 }
 
 /* ================= Layout ================= */
@@ -168,3 +169,17 @@ body {
 .product-card button:hover {
   background-color: var(--secondary);
 }
+
+html {
+  background: #0f172a; /* màu footer */
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+

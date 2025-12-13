@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register | TechReview</title>
+
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="../static/css/share/header.css" />
+  <link rel="stylesheet" href="../static/css/share/footer.css"/>
+  <link rel="stylesheet" href="../static/css/register.css" />
+</head>
+<body>
+
+  <!-- Shared Header Mount -->
+  <div id="app-header"></div>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1 class="brand">Create Account</h1>
+      <p class="subtitle">Tạo tài khoản mới</p>
+
+      <form id="register-form">
+        <div class="field">
+          <label>Username</label>
+          <input id="username" type="text" placeholder="user11" required />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="email" type="email" placeholder="user11@example.com" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input id="password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <button class="btn-primary" type="submit">Đăng ký</button>
+
+        <p class="switch">
+          Bạn đã có tài khoản?
+          <a href="login.html">Đăng nhập</a>
+        </p>
+
+        <div id="message" class="message"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script src="../static/js/share/header.js"></script>
+  <script src="../static/js/share/footer.js"></script>
+  <script src="../static/js/register.js"></script>
+</body>
+</html>
