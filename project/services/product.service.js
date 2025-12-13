@@ -1,3 +1,4 @@
+// project/services/product.service.js
 const Product = require("../models/product.model");
 
 class ProductService {
@@ -37,6 +38,17 @@ class ProductService {
     if (!deleted) throw new Error("Product not found");
 
     return { message: "Product deleted successfully" };
+  }
+
+  // ✅ TOP RATED (Ranking API)
+  // limit: số lượng sản phẩm muốn lấy (mặc định 10)
+  static async getTopRatedProducts(limit = 10) {
+    const n = Number(limit);
+    const safeLimit = Number.isFinite(n) && n > 0 ? n : 10;
+
+    return await Product.find()
+      .sort({ averageRating: -1, createdAt: -1 }) // rating cao trước, cùng rating thì mới hơn trước
+      .limit(safeLimit);
   }
 }
 

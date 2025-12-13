@@ -25,3 +25,13 @@ exports.deleteProduct = catchAsync(async (req, res) => {
   const result = await ProductService.deleteProduct(req.params.id);
   res.json(result);
 });
+
+/**
+ * ✅ GET TOP RATED PRODUCTS
+ * GET /api/products/top-rated?limit=5
+ */
+exports.getTopRatedProducts = catchAsync(async (req, res) => {
+  const { limit } = req.query;
+  const products = await ProductService.getTopRatedProducts(limit);
+  res.json(products);
+});

@@ -9,6 +9,24 @@ const authRoutes = require("./routers/auth.routes");
 const productRoutes = require("./routers/product.routes");
 const reviewRoutes = require("./routers/review.routes");
 
+const logger = require("./utils/logger");
+const errorHandler = require("./utils/errorHandler");
+
+
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    logger.http(
+      `${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`
+    );
+  });
+
+  next();
+});
+
+
 // middlewares
 app.use(helmet());
 app.use(cors());
@@ -18,6 +36,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/reviews", reviewRoutes);
+
+app.use(errorHandler);
 
 
 // connect DB
@@ -29,5 +49,5 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on localhost:${PORT}`);
+  logger.info(`Server running on localhost:${PORT}`);
 });

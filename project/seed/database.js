@@ -55,70 +55,70 @@ const sampleProducts = [
     description: "Apple flagship smartphone 2025",
     price: 2999,
     category: "phone",
-    image: "https://store.storeimages.cdn-apple.com/iphone-16-pro.jpg",
+    image: "https://product.hstatic.net/200000722513/product/1024__5__824c05bb186d4c05826bb25eea92c719_master.png",
   },
   {
     name: "Samsung Galaxy S25 Ultra",
     description: "Premium Android smartphone",
     price: 2799,
     category: "phone",
-    image: "https://images.samsung.com/s25-ultra.jpg",
+    image: "https://file.hstatic.net/200000636033/file/icon19_0197366bbf124fed9b939c9b7075c2db.png",
   },
   {
     name: "MacBook Pro M4 14 inch",
     description: "High-performance laptop",
     price: 4999,
     category: "laptop",
-    image: "https://store.storeimages.cdn-apple.com/macbook-pro-m4.jpg",
+    image: "https://product.hstatic.net/200000722513/product/predator-helios-18-ai-ph18-73-eshell-abyssal-black-01_f94a7b2ded8a4e8ab0db6ff0e8863a13.png",
   },
   {
     name: "Dell XPS 15",
     description: "Creative Windows laptop",
     price: 3500,
     category: "laptop",
-    image: "https://i.dell.com/dell-xps-15.jpg",
+    image: "https://cdn.hstatic.net/products/200000722513/web__61_of_86__aea66174cf754130b266656c48778519_master.jpg",
   },
   {
     name: "Sony WH-1000XM6",
     description: "Noise-canceling headphones",
     price: 549,
     category: "audio",
-    image: "https://sony.com/wh1000xm6.jpg",
+    image: "https://cdn.hstatic.net/products/200000722513/gearvn-tai-nghe-khong-day-logitech-g321-lightspeed-white-1_79891fb9dd42452b92c4532c5b1aa4d6_grande.png",
   },
   {
     name: "AirPods Pro 3",
     description: "Apple wireless earbuds",
     price: 399,
     category: "audio",
-    image: "https://store.storeimages.cdn-apple.com/airpods-pro-3.jpg",
+    image: "https://file.hstatic.net/200000636033/file/icon19_0197366bbf124fed9b939c9b7075c2db.png",
   },
   {
     name: "Logitech MX Master 4",
     description: "Productivity wireless mouse",
     price: 159,
     category: "accessory",
-    image: "https://resource.logitech.com/mx-master-4.jpg",
+    image: "https://file.hstatic.net/200000722513/file/chuot_aa348bf0177b4795a39ab66d51e62ed7.jpg",
   },
   {
     name: "Razer BlackWidow V5",
     description: "Mechanical gaming keyboard",
     price: 249,
     category: "accessory",
-    image: "https://assets.razerzone.com/blackwidow-v5.jpg",
+    image: "https://file.hstatic.net/200000722513/file/ban_phim_93a4d3cefd8345dfac23829818a3c5d4.jpg",
   },
   {
     name: "ASUS TUF 27\" 165Hz",
     description: "Gaming monitor 2K 165Hz",
     price: 499,
     category: "monitor",
-    image: "https://dlcdnwebimgs.asus.com/tuf-gaming-monitor.jpg",
+    image: "https://product.hstatic.net/200000722513/product/asus_pg27aqdm_gearvn_53c46bd0ca1f40f1a7abfb0246800081_e341bb95b0724bee845ba8f093678245_master.jpg",
   },
   {
     name: "iPad Air M2",
     description: "Lightweight tablet for work",
     price: 899,
     category: "tablet",
-    image: "https://store.storeimages.cdn-apple.com/ipad-air-m2.jpg",
+    image: "https://product.hstatic.net/200000722513/product/asus_vy249hgr_120hz_gearvn_3b944fdc15e449968d9ba0739aaea352_medium.jpg",
   },
 ].map((p, idx) => ({ ...p, _id: productIds[idx] }));
 
@@ -142,24 +142,31 @@ const commentTemplates = [
 // ===== RANDOM REVIEW GENERATOR =====
 //
 function randomReviewsForProduct(productId) {
-  const reviewCount = Math.floor(Math.random() * 6) + 5; // 5–10 reviews
+  const reviewCount = Math.floor(Math.random() * 6) + 5;
   const reviews = [];
 
   for (let i = 0; i < reviewCount; i++) {
-    const randomUser = userIds[Math.floor(Math.random() * userIds.length)];
-    const randomRating = Math.floor(Math.random() * 5) + 1;
-    const randomComment = commentTemplates[Math.floor(Math.random() * commentTemplates.length)];
-
     reviews.push({
       _id: new Types.ObjectId(),
-      user: randomUser,
+      user: userIds[Math.floor(Math.random() * userIds.length)],
       product: productId,
-      rating: randomRating,
-      comment: randomComment,
+      rating: Math.floor(Math.random() * 5) + 1,
+      comment: commentTemplates[Math.floor(Math.random() * commentTemplates.length)],
     });
   }
 
   return reviews;
+}
+
+async function updateAverageRatingForProduct(productId) {
+  const stats = await Review.aggregate([
+    { $match: { product: productId } },
+    { $group: { _id: "$product", avgRating: { $avg: "$rating" } } }
+  ]);
+
+  await Product.findByIdAndUpdate(productId, {
+    averageRating: stats.length ? stats[0].avgRating : 0
+  });
 }
 
 //
@@ -167,33 +174,22 @@ function randomReviewsForProduct(productId) {
 //
 async function seedDatabase() {
   try {
-    console.log("Connecting to MongoDB...");
     await connectDB();
 
-    console.log("Clearing existing data...");
     await User.deleteMany();
     await Product.deleteMany();
     await Review.deleteMany();
 
-    console.log("Creating users...");
-    const users = await buildUsers();
-    await User.insertMany(users);
-
-    console.log("Creating products...");
+    await User.insertMany(await buildUsers());
     await Product.insertMany(sampleProducts);
 
-    console.log("Creating reviews...");
-    let allReviews = [];
-    for (let productId of productIds) {
-      allReviews.push(...randomReviewsForProduct(productId));
-    }
-    await Review.insertMany(allReviews);
+    let reviews = [];
+    for (let pid of productIds) reviews.push(...randomReviewsForProduct(pid));
+    await Review.insertMany(reviews);
+
+    for (let pid of productIds) await updateAverageRatingForProduct(pid);
 
     console.log("✔ SEED COMPLETE");
-    console.log("Admin login:");
-    console.log("  email: admin@example.com");
-    console.log("  password: admin123");
-
     process.exit();
   } catch (err) {
     console.error(err);

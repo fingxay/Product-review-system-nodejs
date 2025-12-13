@@ -5,6 +5,10 @@ const adminMiddleware = require("../utils/adminMiddleware");
 
 // Public routes
 router.get("/", productController.getProducts);
+
+// ✅ TOP RATED (ranking) - phải đặt trước "/:id"
+router.get("/top-rated", productController.getTopRatedProducts);
+
 router.get("/:id", productController.getProduct);
 
 // Admin routes
