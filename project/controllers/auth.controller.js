@@ -89,3 +89,49 @@ exports.refresh = catchAsync(async (req, res) => {
     message: "Access token refreshed",
   });
 });
+
+const { verifyAccessToken } = require("../utils/jwt");
+const User = require("../models/user.model");
+
+/**
+ * GET CURRENT USER
+ */
+exports.me = catchAsync(async (req, res) => {
+  const token = req.cookies?.accessToken;
+
+  if (!token) {
+    return res.json({
+      loggedIn: false,
+    });
+  }
+
+  let decoded;
+  try {
+    decoded = verifyAccessToken(token);
+  } catch (err) {
+    return res.json({
+      loggedIn: false,
+    });
+  }
+
+  const user = await User.findById(decoded.userId).select(
+    "username email role"
+  );
+
+  if (!user) {
+    return res.json({
+      loggedIn: false,
+    });
+  }
+
+  return res.json({
+    loggedIn: true,
+    user,
+  });
+});
+
+exports.logout = (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.json({ success: true });
+};

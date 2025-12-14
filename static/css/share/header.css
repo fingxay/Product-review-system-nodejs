@@ -37,3 +37,9 @@
 .header-nav a:hover {
   text-decoration: underline;
 }
+
+.username {
+  color: #fff;
+  font-weight: 600;
+  margin-right: 12px;
+}
