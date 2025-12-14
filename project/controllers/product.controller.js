@@ -7,7 +7,7 @@ exports.createProduct = catchAsync(async (req, res) => {
 });
 
 exports.getProducts = catchAsync(async (req, res) => {
-  const products = await ProductService.getAllProducts();
+  const products = await ProductService.getAllProducts(req.query);
   res.json(products);
 });
 

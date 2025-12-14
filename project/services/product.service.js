@@ -10,9 +10,18 @@ class ProductService {
   }
 
   // GET ALL
-  static async getAllProducts() {
-    return await Product.find();
+  // GET ALL (supports category filter)
+  static async getAllProducts(filters = {}) {
+    const query = {};
+
+    // category filter: /api/products?category=phone
+    if (filters.category) {
+      query.category = String(filters.category).trim().toLowerCase();
+    }
+
+    return await Product.find(query);
   }
+
 
   // GET BY ID
   static async getProductById(id) {

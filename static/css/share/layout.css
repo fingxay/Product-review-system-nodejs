@@ -1,0 +1,28 @@
+/* ================= Global Page Layout ================= */
+
+/*
+  Sticky footer chuẩn:
+  - Footer luôn nằm cuối trang
+  - Nội dung ít vẫn phải scroll nhẹ mới thấy footer
+*/
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+
+  /* để header fixed không đè content */
+  padding-top: 74px;
+}
+
+/* wrapper cho nội dung chính */
+.page-wrapper {
+  flex: 1;
+
+  /* tạo khoảng scroll nhẹ trước khi thấy footer */
+  padding-bottom: 120px;
+}

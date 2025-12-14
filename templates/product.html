@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Detail</title>
+
+  <!-- Shared -->
+  <link rel="stylesheet" href="../static/css/share/header.css" />
+  <link rel="stylesheet" href="../static/css/share/footer.css" />
+  <link rel="stylesheet" href="../static/css/share/layout.css" />
+
+  <!-- Product only -->
+  <link rel="stylesheet" href="../static/css/product.css" />
+</head>
+<body>
+
+  <div id="app-header"></div>
+
+  <!-- QUAN TRỌNG -->
+  <div class="page-wrapper">
+    <main class="product-container">
+
+      <!-- Product info -->
+      <section class="product-main">
+        <div class="product-image">
+          <img id="productImage" alt="product"/>
+        </div>
+
+        <div class="product-info">
+          <h1 id="productName"></h1>
+          <p class="category" id="productCategory"></p>
+
+          <div class="rating">
+            ⭐ <span id="productRating"></span>
+          </div>
+
+          <p class="description" id="productDescription"></p>
+        </div>
+      </section>
+
+      <!-- Reviews -->
+      <section class="review-section">
+        <h2>Đánh giá sản phẩm</h2>
+
+        <div id="reviewList"></div>
+
+        <div class="pagination" id="reviewPagination"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script src="../static/js/share/header.js"></script>
+  <script src="../static/js/share/footer.js"></script>
+  <script src="../static/js/product.js"></script>
+</body>
+</html>

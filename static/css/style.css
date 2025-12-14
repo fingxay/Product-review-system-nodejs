@@ -155,6 +155,7 @@ body {
   margin-top: auto;
 }
 
+/* ================= View Button ================= */
 .product-card button {
   width: 100%;
   background-color: var(--primary);
@@ -164,22 +165,118 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
+/* Hover: nổi lên + đậm màu */
 .product-card button:hover {
   background-color: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
 }
 
-html {
-  background: #0f172a; /* màu footer */
+/* Active: nút lún xuống */
+.product-card button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
 }
+
+/* Focus: dùng khi tab bằng bàn phím */
+.product-card button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.35),
+    0 6px 14px rgba(37, 99, 235, 0.35);
+}
+
+
 
 body {
   background: var(--bg);
-  min-height: 100vh;
+  color: var(--text);
 }
+
 
 html, body {
   overflow-x: hidden;
 }
 
+/* ================= Category Filter ================= */
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.category-filter label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.category-filter select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: #fff;
+  cursor: pointer;
+}
+
+main {
+  min-height: calc(100vh + 10px);
+}
+
+/* ================= Pagination ================= */
+.pagination {
+  margin: 40px 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.pagination button.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination .dots {
+  padding: 0 6px;
+  font-size: 16px;
+  color: #9ca3af;
+  user-select: none;
+}
