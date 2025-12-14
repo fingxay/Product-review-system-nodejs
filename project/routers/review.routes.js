@@ -1,7 +1,10 @@
+// project/routers/review.routes.js
 const router = require("express").Router();
 const authMiddleware = require("../utils/authMiddleware");
-const adminMiddleware = require("../utils/adminMiddleware");
 const reviewController = require("../controllers/review.controller");
+
+// ✅ Review summary (average + count by stars)
+router.get("/:productId/summary", reviewController.getReviewSummary);
 
 // Create review
 router.post("/:productId", authMiddleware, reviewController.createReview);
@@ -13,10 +16,6 @@ router.get("/:productId", reviewController.getReviews);
 router.put("/:reviewId", authMiddleware, reviewController.updateReview);
 
 // Delete review (user or admin)
-router.delete(
-  "/:reviewId",
-  authMiddleware,
-  reviewController.deleteReview
-);
+router.delete("/:reviewId", authMiddleware, reviewController.deleteReview);
 
 module.exports = router;

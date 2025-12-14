@@ -6,6 +6,8 @@ const productId = params.get("id");
 
 let allReviews = [];
 let currentPage = 1;
+let currentRatingFilter = null; // null = tất cả
+
 
 /* ================= Load product ================= */
 async function loadProduct() {
@@ -23,11 +25,24 @@ async function loadProduct() {
 
 /* ================= Load reviews ================= */
 async function loadReviews() {
-  const res = await fetch(`${API_BASE_URL}/reviews/${productId}`);
+  let url = `${API_BASE_URL}/reviews/${productId}`;
+
+  if (currentRatingFilter) {
+    url += `?rating=${currentRatingFilter}`;
+  }
+
+  const res = await fetch(url);
   allReviews = await res.json();
+
+  currentPage = 1; // reset page khi đổi filter
   renderReviews();
   renderPagination();
 }
+function setRatingFilter(rating) {
+  currentRatingFilter = rating; // null | 1..5
+  loadReviews();
+}
+
 
 function renderReviews() {
   const list = document.getElementById("reviewList");
@@ -123,8 +138,61 @@ function renderPagination() {
     container.appendChild(createButton("›", currentPage + 1));
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".filter").forEach(btn => {
+    btn.addEventListener("click", () => {
 
+      // remove active
+      document.querySelectorAll(".filter")
+        .forEach(b => b.classList.remove("active"));
+
+      // add active
+      btn.classList.add("active");
+
+      const value = btn.dataset.rating;
+      setRatingFilter(value ? Number(value) : null);
+    });
+  });
+});
+
+
+async function loadReviewSummary() {
+  const res = await fetch(`${API_BASE_URL}/reviews/${productId}/summary`);
+  const data = await res.json();
+
+  // Average score
+  const avg = data.average || 0;
+  document.getElementById("avgScore").textContent = avg.toFixed(1);
+
+  // Stars render
+  renderAverageStars(avg);
+
+  // Count per star
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById(`count-${i}`);
+    if (el) el.textContent = data.stars?.[i] || 0;
+  }
+}
+
+function renderAverageStars(avg) {
+  const starsEl = document.getElementById("avgStars");
+  starsEl.innerHTML = "";
+
+  const fullStars = Math.floor(avg);
+  const hasHalf = avg - fullStars >= 0.5;
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      starsEl.innerHTML += "★";
+    } else if (i === fullStars + 1 && hasHalf) {
+      starsEl.innerHTML += "☆"; // đơn giản (không half icon)
+    } else {
+      starsEl.innerHTML += "☆";
+    }
+  }
+}
 
 /* ================= Init ================= */
 loadProduct();
 loadReviews();
+loadReviewSummary();

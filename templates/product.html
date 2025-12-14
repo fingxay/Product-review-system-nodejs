@@ -40,12 +40,43 @@
 
       <!-- Reviews -->
       <section class="review-section">
-        <h2>Đánh giá sản phẩm</h2>
 
+        <!-- Header -->
+        <div class="review-header">
+          <h2>Đánh giá sản phẩm</h2>
+          <button class="btn-write-review">Viết đánh giá</button>
+        </div>
+
+        <!-- Summary -->
+        <div class="review-summary">
+          <div class="summary-left">
+            <div class="avg-score">
+              <span class="score" id="avgScore">0</span>
+              <span class="max">/ 5</span>
+            </div>
+            <div class="stars" id="avgStars"></div>
+          </div>
+
+          <div class="summary-right">
+            <button data-rating="" class="filter active">Tất cả</button>
+            <button data-rating="5" class="filter">5 Sao (<span id="count-5">0</span>)</button>
+            <button data-rating="4" class="filter">4 Sao (<span id="count-4">0</span>)</button>
+            <button data-rating="3" class="filter">3 Sao (<span id="count-3">0</span>)</button>
+            <button data-rating="2" class="filter">2 Sao (<span id="count-2">0</span>)</button>
+            <button data-rating="1" class="filter">1 Sao (<span id="count-1">0</span>)</button>
+          </div>
+        </div>
+
+
+        <!-- Review list -->
         <div id="reviewList"></div>
 
+        <!-- Pagination -->
         <div class="pagination" id="reviewPagination"></div>
+
       </section>
+
+
 
     </main>
   </div>

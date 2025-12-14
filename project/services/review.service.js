@@ -59,11 +59,22 @@ class ReviewService {
     return { message: "Đã xoá review!" };
   }
 
-  // Get all reviews for product
-  async getReviews(productId) {
-    return Review.find({ product: productId })
+  // Get all reviews for product (support filter by rating)
+  async getReviews(productId, rating) {
+    const filter = {
+      product: productId
+    };
+
+    // Nếu có query rating (?rating=5)
+    if (rating) {
+      filter.rating = Number(rating);
+    }
+
+    return Review.find(filter)
+      .sort({ createdAt: -1 }) // mới nhất lên trước
       .populate("user", "username email");
   }
+
 
   // Calculate and update average rating
   async updateProductRating(productId) {
