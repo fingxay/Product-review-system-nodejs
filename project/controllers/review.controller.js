@@ -41,6 +41,26 @@ class ReviewController {
     }
   }
 
+  /* ================= MY REVIEW ================= */
+  // GET /api/reviews/:productId/my
+  async getMyReview(req, res) {
+    try {
+      const productId = req.params.productId;
+      const userId = req.user.userId;
+
+      const review = await Review.findOne({
+        product: productId,
+        user: userId,
+      }).populate("user", "username email");
+
+      // Có thể trả null nếu chưa review
+      res.json(review);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  }
+
+
   /* ================= SUMMARY ================= */
   // GET /api/reviews/:productId/summary
   async getReviewSummary(req, res) {

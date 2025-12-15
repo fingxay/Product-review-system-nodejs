@@ -3,6 +3,9 @@ const router = require("express").Router();
 const authMiddleware = require("../utils/authMiddleware");
 const reviewController = require("../controllers/review.controller");
 
+// 🔴 MY REVIEW
+router.get("/:productId/my",authMiddleware,reviewController.getMyReview);
+
 // ✅ Review summary (average + count by stars)
 router.get("/:productId/summary", reviewController.getReviewSummary);
 

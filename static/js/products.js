@@ -57,7 +57,10 @@ function renderProducts() {
 
       <div class="rating">
         <span class="star">⭐</span>
-        <span class="value">${product.averageRating?.toFixed(1) || 0}</span>
+        <span class="value">${product.averageRating !== undefined
+  ? product.averageRating.toFixed(1)
+  : "0.0"}
+</span>
       </div>
 
       <div class="actions">

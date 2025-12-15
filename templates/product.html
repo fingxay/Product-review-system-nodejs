@@ -81,6 +81,64 @@
     </main>
   </div>
 
+  <!-- Delete Review Modal -->
+  <div id="delete-review-modal" class="review-modal hidden">
+    <div class="review-modal-overlay"></div>
+
+    <div class="review-modal-content">
+      <h3>Xóa đánh giá</h3>
+
+      <p style="margin: 8px 0 16px; color:#374151;">
+        Bạn có chắc chắn muốn xóa đánh giá này không?
+        <br />
+        <strong>Hành động này không thể hoàn tác.</strong>
+      </p>
+
+      <div class="review-modal-actions">
+        <button id="btnCancelDelete" class="btn-cancel">Hủy</button>
+        <button id="btnConfirmDelete" class="btn-delete-review">
+          Xóa đánh giá
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== Review Modal ===== -->
+<div id="review-modal" class="review-modal hidden">
+  <div class="review-modal-overlay"></div>
+
+  <div class="review-modal-content">
+    <h3 id="reviewModalTitle">Viết đánh giá</h3>
+
+    <!-- Star rating -->
+    <div class="star-rating" id="starRating">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <!-- Comment -->
+    <textarea
+      id="reviewComment"
+      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..."
+      rows="4"
+    ></textarea>
+
+    <!-- Error -->
+    <div id="reviewError" class="review-error"></div>
+
+    <!-- Actions -->
+    <div class="review-modal-actions">
+      <button id="btnCancelReview" class="btn-cancel">Hủy</button>
+      <button id="btnSubmitReview" class="btn-submit">Gửi đánh giá</button>
+    </div>
+  </div>
+</div>
+
+
   <div id="app-footer"></div>
 
   <script src="../static/js/share/header.js"></script>

@@ -305,3 +305,226 @@ body {
   color: #f59e0b;
   margin-bottom: 6px;
 }
+
+/* ===== Review item layout ===== */
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.review-row {
+  display: flex;               /* flex (bố cục linh hoạt) */
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.review-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-user {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.review-rating {
+  margin-bottom: 6px;
+}
+
+.review-comment {
+  line-height: 1.5;
+}
+
+/* Actions: đặt sát phải */
+.review-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Button styles */
+.btn-edit-review,
+.btn-delete-review {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.15s ease;
+}
+
+.btn-edit-review {
+  background: #fff;
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-edit-review:hover {
+  background: rgba(13, 110, 253, 0.08);
+}
+
+.btn-delete-review {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+
+.btn-delete-review:hover {
+  filter: brightness(0.95);
+}
+
+.btn-edit-review:disabled,
+.btn-delete-review:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Review Modal ===== */
+.review-modal.hidden {
+  display: none;
+}
+
+.review-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.review-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.review-modal-content {
+  position: relative;
+  background: #fff;
+  width: 420px;
+  max-width: 90%;
+  margin: 120px auto;
+  padding: 24px;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.review-modal-content h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Stars */
+.star-rating {
+  display: flex;
+  gap: 6px;
+  font-size: 28px;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.star-rating span {
+  color: #e5e7eb;
+}
+
+.star-rating span.active {
+  color: #f59e0b;
+}
+
+/* Comment */
+#reviewComment {
+  width: 100%;
+  box-sizing: border-box;   /* ✅ QUAN TRỌNG */
+  resize: none;
+  min-height: 90px;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* Error */
+.review-error {
+  color: #dc2626;
+  font-size: 13px;
+  min-height: 16px;
+  margin-bottom: 10px;
+}
+
+/* Actions */
+.review-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background: #1e40af;
+}
+
+/* ===== Review Modal ===== */
+.review-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Star rating */
+#starRating {
+  display: flex;
+  gap: 6px;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+#starRating span {
+  color: #d1d5db;
+  transition: color 0.15s ease;
+}
+
+#starRating span.active {
+  color: #f59e0b;
+}
+
+/* Textarea */
+#reviewComment {
+  resize: none;
+  min-height: 90px;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Error message */
+#reviewError {
+  min-height: 18px;        /* ✅ giữ layout không nhảy */
+  color: #dc2626;
+  font-size: 13px;
+}
+
+/* Footer buttons */
+.review-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
