@@ -3,12 +3,12 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const { Types } = mongoose;
 
-const Product = require("../models/product.model");
-const User = require("../models/user.model");
-const Review = require("../models/review.model");
+const Product = require("./project/models/product.model");
+const User = require("./project/models/user.model");
+const Review = require("./project/models/review.model");
 
-const { hashPassword } = require("../utils/hashing");
-const connectDB = require("../utils/db");
+const { hashPassword } = require("./project/utils/hashing");
+const connectDB = require("./project/utils/db");
 
 /**
  * CONFIG

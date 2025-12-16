@@ -50,7 +50,7 @@ docker-compose up --build
 > Chỉ cần chạy ở lần đầu tiên trên mỗi máy
 
 Mở terminal mới và chạy:
-docker exec -it techreview-backend node project/seed/database.js
+docker exec -it techreview-backend node database.js
 
 
 Khi thấy:
