@@ -1,6 +1,7 @@
 const AuthService = require("../services/auth.service");
-const { verifyRefreshToken, generateAccessToken } = require("../utils/jwt");
+const { verifyRefreshToken, generateAccessToken, verifyAccessToken } = require("../utils/jwt");
 const catchAsync = require("../utils/catchAsync");
+const User = require("../models/user.model");
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -20,7 +21,18 @@ exports.register = catchAsync(async (req, res) => {
  * LOGIN
  */
 exports.login = catchAsync(async (req, res) => {
-  const { accessToken, refreshToken } = await AuthService.login(req.body);
+  const { accessToken, refreshToken, userId } =
+  await AuthService.login(req.body);
+
+// Lấy user từ DB để trả role cho frontend
+const user = await User.findById(userId).select("email role");
+
+if (!user) {
+  return res.status(401).json({
+    success: false,
+    message: "Login failed: user not found (invalid userId from AuthService)",
+  });
+}
 
   /**
    * ===== Set HTTP-Only Cookies =====
@@ -42,7 +54,13 @@ exports.login = catchAsync(async (req, res) => {
   res.json({
     success: true,
     message: "Login success",
+    user: {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+    },
   });
+
 });
 
 /**
@@ -90,8 +108,6 @@ exports.refresh = catchAsync(async (req, res) => {
   });
 });
 
-const { verifyAccessToken } = require("../utils/jwt");
-const User = require("../models/user.model");
 
 /**
  * GET CURRENT USER

@@ -105,5 +105,5 @@ app.listen(PORT, () => {
   // In link để bạn click mở nhanh
   logger.info(`Open UI: http://localhost:${PORT}/index.html`);
   logger.info(`Login:   http://localhost:${PORT}/login.html`);
-  logger.info(`Register:http://localhost:${PORT}/register.html`);
+  logger.info(`admin: http://localhost:${PORT}/admin-products.html`);
 });

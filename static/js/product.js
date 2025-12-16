@@ -20,6 +20,18 @@ let pendingDeleteReviewId = null;
 
 let editingReviewId = null;
 
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2500);
+}
+
 /* ================= PRODUCT ================= */
 async function loadProduct() {
   const res = await fetch(`${API_BASE_URL}/products/${productId}`);
@@ -83,9 +95,16 @@ async function loadReviews() {
   allReviews = await res.json();
 
   if (myReview && myReview._id) {
-    allReviews = allReviews.filter(r => r._id !== myReview._id);
-    allReviews.unshift(myReview);
+    const shouldPinMyReview =
+      currentRatingFilter === null ||
+      Number(currentRatingFilter) === myReview.rating;
+
+    if (shouldPinMyReview) {
+      allReviews = allReviews.filter(r => r._id !== myReview._id);
+      allReviews.unshift(myReview);
+    }
   }
+
 
   currentPage = 1;
   renderReviews();
@@ -159,28 +178,57 @@ function renderPagination() {
 
   if (totalPages <= 1) return;
 
-  const btn = (label, page, active = false) => {
+  const MAX_VISIBLE = 5; // số page hiển thị giữa
+  const btn = (label, page, active = false, disabled = false) => {
     const b = document.createElement("button");
     b.textContent = label;
+
     if (active) b.classList.add("active");
-    b.onclick = () => {
-      currentPage = page;
-      renderReviews();
-      renderPagination();
-    };
+    if (disabled) b.disabled = true;
+
+    if (!disabled) {
+      b.onclick = () => {
+        currentPage = page;
+        renderReviews();
+        renderPagination();
+      };
+    }
+
     return b;
   };
 
-  if (currentPage > 1)
-    container.appendChild(btn("‹", currentPage - 1));
+  // ‹ Prev
+  container.appendChild(
+    btn("‹", currentPage - 1, false, currentPage === 1)
+  );
 
-  for (let i = 1; i <= totalPages; i++) {
+  let start = Math.max(1, currentPage - 2);
+  let end = Math.min(totalPages, currentPage + 2);
+
+  if (start > 1) {
+    container.appendChild(btn("1", 1));
+    if (start > 2) {
+      container.appendChild(btn("...", null, false, true));
+    }
+  }
+
+  for (let i = start; i <= end; i++) {
     container.appendChild(btn(i, i, i === currentPage));
   }
 
-  if (currentPage < totalPages)
-    container.appendChild(btn("›", currentPage + 1));
+  if (end < totalPages) {
+    if (end < totalPages - 1) {
+      container.appendChild(btn("...", null, false, true));
+    }
+    container.appendChild(btn(totalPages, totalPages));
+  }
+
+  // › Next
+  container.appendChild(
+    btn("›", currentPage + 1, false, currentPage === totalPages)
+  );
 }
+
 
 /* ================= FILTER ================= */
 function setRatingFilter(rating) {
@@ -331,31 +379,25 @@ document.getElementById("btnSubmitReview").onclick = async () => {
     }),
   });
 
-  if (!res.ok) {
-    let message = "Gửi đánh giá thất bại";
+  const result = await res.json();
 
-    try {
-      const data = await res.json();
-      if (data.error?.includes("rating"))
-        message = "Vui lòng chọn số sao đánh giá";
-      else if (data.error?.includes("comment"))
-        message = "Nội dung đánh giá quá ngắn";
-    } catch {}
-
-    document.getElementById("reviewError").textContent = message;
+  if (!res.ok || result.success === false) {
+    document.getElementById("reviewError").textContent = result.message;
+    showToast(result.message, "error");
     return;
   }
 
-  // Reset state
-  editingReviewId = null;
+  showToast(result.message, "success");
 
-  // Close modal
+  // Reset
+  editingReviewId = null;
   document.getElementById("review-modal").classList.add("hidden");
 
   await loadMyReview();
   await loadReviews();
   loadReviewSummary();
   setupWriteReviewButton();
+
 };
 
 
@@ -391,24 +433,26 @@ document.getElementById("btnConfirmDelete").onclick = async () => {
     }
   );
 
-  if (!res.ok) {
-    alert("Xóa đánh giá thất bại");
+  const result = await res.json();
+
+  if (!res.ok || result.success === false) {
+    showToast(result.message, "error");
     return;
   }
 
-  // Reset state
+  showToast(result.message, "success");
+
   pendingDeleteReviewId = null;
   myReview = null;
 
-  // Đóng modal
   document
     .getElementById("delete-review-modal")
     .classList.add("hidden");
 
-  // Reload UI
   await loadReviews();
   loadReviewSummary();
   setupWriteReviewButton();
+
 };
 
 

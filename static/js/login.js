@@ -32,8 +32,16 @@ form.addEventListener("submit", async (e) => {
 
     // Redirect sau khi login
     setTimeout(() => {
+      // 👉 ADMIN
+      if (data.user?.role === "admin") {
+        window.location.href = "admin-products.html";
+        return;
+      }
+
+      // 👉 USER thường
       window.location.href = "index.html";
     }, 500);
+
   } catch (err) {
     msg.style.color = "red";
     msg.textContent = err.message || "Không thể kết nối server";

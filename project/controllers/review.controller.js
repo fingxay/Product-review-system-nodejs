@@ -18,31 +18,37 @@ class ReviewController {
         comment
       );
 
-      res.json(review);
+      res.json({
+        success: true,
+        message: "Đánh giá sản phẩm thành công",
+        data: review,
+      });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 
-  /* ================= LIST (with rating filter) ================= */
+  /* ================= LIST ================= */
   async getReviews(req, res) {
     try {
       const productId = req.params.productId;
-      const rating = req.query.rating; // ?rating=5
+      const rating = req.query.rating;
 
-      const reviews = await reviewService.getReviews(
-        productId,
-        rating
-      );
+      const reviews = await reviewService.getReviews(productId, rating);
 
       res.json(reviews);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 
   /* ================= MY REVIEW ================= */
-  // GET /api/reviews/:productId/my
   async getMyReview(req, res) {
     try {
       const productId = req.params.productId;
@@ -53,21 +59,19 @@ class ReviewController {
         user: userId,
       }).populate("user", "username email");
 
-      // Có thể trả null nếu chưa review
       res.json(review);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 
-
   /* ================= SUMMARY ================= */
-  // GET /api/reviews/:productId/summary
   async getReviewSummary(req, res) {
     try {
-      const productId = new mongoose.Types.ObjectId(
-        req.params.productId
-      );
+      const productId = new mongoose.Types.ObjectId(req.params.productId);
 
       const result = await Review.aggregate([
         { $match: { product: productId } },
@@ -94,12 +98,9 @@ class ReviewController {
         },
       ]);
 
-      const overall = result[0]?.overall[0] || {
-        average: 0,
-        total: 0,
-      };
-
+      const overall = result[0]?.overall[0] || { average: 0, total: 0 };
       const stars = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
       result[0]?.byStar.forEach((s) => {
         stars[s._id] = s.count;
       });
@@ -110,7 +111,10 @@ class ReviewController {
         stars,
       });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 
@@ -126,9 +130,16 @@ class ReviewController {
         req.body
       );
 
-      res.json(review);
+      res.json({
+        success: true,
+        message: "Cập nhật đánh giá thành công",
+        data: review,
+      });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 
@@ -145,9 +156,15 @@ class ReviewController {
         isAdmin
       );
 
-      res.json(result);
+      res.json({
+        success: true,
+        message: result.message,
+      });
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 }

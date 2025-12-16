@@ -44,7 +44,9 @@ class AuthService {
     return {
       accessToken,
       refreshToken,
+      userId: user._id,
     };
+
   }
 }
 

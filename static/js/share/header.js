@@ -18,27 +18,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
   };
 
-  // 3️⃣ Hàm render khi ĐÃ login
-  const renderUser = (username) => {
-    nav.innerHTML = `
-      <span class="username">👤 ${username}</span>
-      <a href="#" id="logoutBtn">Đăng xuất</a>
-    `;
+// 3️⃣ Hàm render khi ĐÃ login
+const renderUser = (user) => {
+  nav.innerHTML = `
+    <span class="username">👤 ${user.username}</span>
+    <a href="#" id="logoutBtn">Đăng xuất</a>
+  `;
 
-    document
-      .getElementById("logoutBtn")
-      .addEventListener("click", async (e) => {
-        e.preventDefault();
+  // ===== ADMIN LINK =====
+  if (user.role === "admin") {
+    const brand = headerContainer.querySelector(".brand");
 
-        await fetch("http://localhost:3000/api/auth/logout", {
-          method: "POST",
-          credentials: "include",
-        });
+    // tránh render trùng
+    if (!document.querySelector(".admin-link")) {
+      const adminLink = document.createElement("a");
+      adminLink.href = "admin-products.html";
+      adminLink.textContent = "Admin";
+      adminLink.className = "admin-link";
 
-        // ✅ Sau logout → render lại UI
-        renderGuest();
+      // 👉 chèn NGAY SAU TechReview
+      brand.insertAdjacentElement("afterend", adminLink);
+    }
+  }
+
+
+  document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      await fetch("http://localhost:3000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
       });
-  };
+
+      location.reload(); // reload để clean UI
+    });
+};
+
 
   // 4️⃣ Kiểm tra trạng thái đăng nhập
   try {
@@ -49,10 +66,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = await res.json();
 
     if (data.loggedIn) {
-      renderUser(data.user.username);
+      renderUser(data.user);
     } else {
       renderGuest();
     }
+
   } catch (err) {
     console.error("Auth check failed", err);
     renderGuest();
