@@ -3,20 +3,29 @@ const PRODUCTS_PER_PAGE = 9;
 
 let allProducts = [];
 let currentPage = 1;
+let currentCategory;
+let currentSort;
+
 
 /**
  * Load products
  */
-async function loadProducts(category) {
+async function loadProducts(category, sort) {
   try {
-    const url = category
-      ? `${API_BASE_URL}/products?category=${encodeURIComponent(category)}`
-      : `${API_BASE_URL}/products`;
+    currentCategory = category;
+    currentSort = sort;
+
+    const params = new URLSearchParams();
+
+    if (category) params.append("category", category);
+    if (sort) params.append("sort", sort);
+
+    const url = `${API_BASE_URL}/products?${params.toString()}`;
 
     const res = await fetch(url);
     allProducts = await res.json();
 
-    ensureCategoryFilter(allProducts);
+    ensureCategoryAndSortFilter(allProducts);
     currentPage = 1;
 
     renderProducts();
@@ -25,6 +34,7 @@ async function loadProducts(category) {
     console.error("Failed to load products", error);
   }
 }
+
 
 /**
  * Render products (theo page)
@@ -140,7 +150,7 @@ function renderPagination() {
 /**
  * Category filter
  */
-function ensureCategoryFilter(products) {
+function ensureCategoryAndSortFilter(products) {
   if (document.getElementById("category-filter")) return;
 
   const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
@@ -151,22 +161,46 @@ function ensureCategoryFilter(products) {
   const wrapper = document.createElement("div");
   wrapper.className = "category-filter";
 
-  const label = document.createElement("label");
-  label.textContent = "Loại sản phẩm:";
+  /* ===== CATEGORY ===== */
+  const catLabel = document.createElement("label");
+  catLabel.textContent = "Loại sản phẩm:";
 
-  const select = document.createElement("select");
-  select.id = "category-filter";
+  const catSelect = document.createElement("select");
+  catSelect.id = "category-filter";
+  catSelect.innerHTML = `<option value="">Tất cả</option>`;
 
-  select.innerHTML = `<option value="">Tất cả</option>`;
   categories.forEach(c => {
-    select.innerHTML += `<option value="${c}">${c}</option>`;
+    catSelect.innerHTML += `<option value="${c}">${c}</option>`;
   });
 
-  select.onchange = () => loadProducts(select.value || undefined);
+  catSelect.onchange = () =>
+    loadProducts(catSelect.value || undefined, currentSort);
 
-  wrapper.append(label, select);
+  /* ===== SORT ===== */
+  const sortLabel = document.createElement("label");
+  sortLabel.textContent = "Sắp xếp:";
+
+  const sortSelect = document.createElement("select");
+  sortSelect.id = "sort-filter";
+  sortSelect.innerHTML = `
+    <option value="">Mặc định</option>
+    <option value="rating_asc">⭐ Thấp → Cao</option>
+    <option value="rating_desc">⭐ Cao → Thấp</option>
+  `;
+
+  sortSelect.onchange = () =>
+    loadProducts(currentCategory, sortSelect.value || undefined);
+
+  wrapper.append(
+    catLabel,
+    catSelect,
+    sortLabel,
+    sortSelect
+  );
+
   productList.parentElement.insertBefore(wrapper, productList);
 }
+
 
 function viewProduct(productId) {
   window.location.href = `product.html?id=${productId}`;

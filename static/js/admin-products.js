@@ -11,6 +11,9 @@ let currentCategory = ""; // category đang lọc ("" = tất cả)
 const PAGE_SIZE = 7;
 let currentPage = 1;
 
+let currentSort = ""; // rating-asc | rating-desc | ""
+
+
 
 
 // ===== MODALS / FORM ELEMENTS =====
@@ -48,17 +51,20 @@ function showToast(message, type = "success") {
   }, 2500);
 }
 function ensureCategoryFilter(productsInput) {
-  // nếu đã có dropdown rồi thì chỉ update options
-  let select = document.getElementById("admin-category-filter");
-  const categories = [...new Set((productsInput || [])
-    .map(p => (p.category || "").trim())
-    .filter(Boolean))];
+  const filterBar = document.getElementById("adminFilterBar");
+  if (!filterBar) return;
 
-  // nếu không có category nào thì thôi
+  let select = document.getElementById("admin-category-filter");
+
+  const categories = [...new Set(
+    (productsInput || [])
+      .map(p => (p.category || "").trim())
+      .filter(Boolean)
+  )];
+
   if (!categories.length) return;
 
   if (!select) {
-    // tạo UI giống trang index (dùng lại CSS .category-filter trong style.css)
     const wrapper = document.createElement("div");
     wrapper.className = "category-filter";
 
@@ -70,23 +76,13 @@ function ensureCategoryFilter(productsInput) {
 
     select.onchange = () => {
       currentCategory = select.value || "";
-      applyCategoryFilter();
+      applyFilters();
     };
 
     wrapper.append(label, select);
-
-    // chèn ngay dưới header của admin
-    const adminHeader = document.querySelector(".admin-header");
-    if (adminHeader && adminHeader.parentElement) {
-      adminHeader.parentElement.insertBefore(wrapper, adminHeader.nextSibling);
-    } else {
-      // fallback: chèn đầu main
-      const main = document.querySelector("main.admin-container");
-      if (main) main.insertBefore(wrapper, main.firstChild);
-    }
+    filterBar.appendChild(wrapper);
   }
 
-  // build options
   select.innerHTML = `<option value="">Tất cả</option>`;
   categories.forEach(c => {
     const opt = document.createElement("option");
@@ -95,9 +91,63 @@ function ensureCategoryFilter(productsInput) {
     select.appendChild(opt);
   });
 
-  // giữ lại lựa chọn cũ nếu còn tồn tại
   select.value = currentCategory;
 }
+
+
+function ensureSortFilter() {
+  const filterBar = document.getElementById("adminFilterBar");
+  if (!filterBar) return;
+
+  if (document.getElementById("admin-sort-filter")) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "category-filter";
+
+  const label = document.createElement("label");
+  label.textContent = "Sắp xếp:";
+
+  const select = document.createElement("select");
+  select.id = "admin-sort-filter";
+
+  select.innerHTML = `
+    <option value="">Mặc định</option>
+    <option value="rating-asc">⭐ Thấp → Cao</option>
+    <option value="rating-desc">⭐ Cao → Thấp</option>
+  `;
+
+  select.onchange = () => {
+    currentSort = select.value;
+    applyFilters();
+  };
+
+  wrapper.append(label, select);
+  filterBar.appendChild(wrapper);
+}
+
+function applyFilters() {
+  products = [...allProducts];
+
+  // filter category
+  if (currentCategory) {
+    products = products.filter(
+      p => (p.category || "").trim() === currentCategory
+    );
+  }
+
+  // sort rating
+  if (currentSort === "rating-asc") {
+    products.sort((a, b) => (a.averageRating ?? 0) - (b.averageRating ?? 0));
+  }
+
+  if (currentSort === "rating-desc") {
+    products.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0));
+  }
+
+  currentPage = 1;
+  renderProducts();
+}
+
 
 function applyCategoryFilter() {
   if (currentCategory) {
@@ -188,11 +238,10 @@ async function loadProducts() {
 
     allProducts = await res.json();
 
-    // render dropdown (và update options)
     ensureCategoryFilter(allProducts);
+    ensureSortFilter();
+    applyFilters();
 
-    // áp filter hiện tại (nếu đang chọn category)
-    applyCategoryFilter();
 
 
   } catch (err) {

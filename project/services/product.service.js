@@ -13,14 +13,31 @@ class ProductService {
   // GET ALL (supports category filter)
   static async getAllProducts(filters = {}) {
     const query = {};
+    const sort = {};
 
-    // category filter: /api/products?category=phone
+    // filter category
     if (filters.category) {
       query.category = String(filters.category).trim().toLowerCase();
     }
 
-    return await Product.find(query);
+    // sort theo rating
+    // sort=rating_asc | rating_desc
+    if (filters.sort === "rating_asc") {
+      sort.averageRating = 1;
+    }
+
+    if (filters.sort === "rating_desc") {
+      sort.averageRating = -1;
+    }
+
+    // fallback: mới nhất
+    if (!Object.keys(sort).length) {
+      sort.createdAt = -1;
+    }
+
+    return await Product.find(query).sort(sort);
   }
+
 
 
   // GET BY ID
