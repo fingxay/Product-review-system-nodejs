@@ -91,6 +91,17 @@ là seed thành công.
    MONGODB_AUTH_SOURCE=admin
    ```
 
+   Copy file mẫu: Người dùng chạy 
+   ```bash
+   cp .env.example .env
+   ```
+   (trên Linux/Mac) 
+   hoặc 
+   ```bash
+   copy .env.example .env
+   ```
+   (trên Windows) để tạo file .env từ mẫu.
+
 4. **Khởi động MongoDB**:
    Đảm bảo MongoDB đang chạy trên hệ thống của bạn.
 
