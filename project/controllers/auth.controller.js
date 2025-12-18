@@ -24,15 +24,15 @@ exports.login = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, userId } =
   await AuthService.login(req.body);
 
-// Lấy user từ DB để trả role cho frontend
-const user = await User.findById(userId).select("email role");
+  // Lấy user từ DB để trả role cho frontend
+  const user = await User.findById(userId).select("email role");
 
-if (!user) {
-  return res.status(401).json({
-    success: false,
-    message: "Login failed: user not found (invalid userId from AuthService)",
-  });
-}
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "Login failed: user not found (invalid userId from AuthService)",
+    });
+  }
 
   /**
    * ===== Set HTTP-Only Cookies =====

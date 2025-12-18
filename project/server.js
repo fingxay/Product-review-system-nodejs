@@ -53,7 +53,7 @@ app.use(
       },
     },
   })
-);
+);  
 
 
 // Nếu bạn chạy frontend bằng chính localhost:3000 thì CORS không cần,
@@ -106,4 +106,5 @@ app.listen(PORT, () => {
   logger.info(`Open UI: http://localhost:${PORT}/index.html`);
   logger.info(`Login:   http://localhost:${PORT}/login.html`);
   logger.info(`admin: http://localhost:${PORT}/admin-products.html`);
+  logger.info(`Admin credentials - Email: admin@gmail.com, Password: admin123`);
 });

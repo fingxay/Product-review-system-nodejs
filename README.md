@@ -78,11 +78,17 @@ là seed thành công.
 3. **Thiết lập biến môi trường**:
    Tạo tệp `.env` trong thư mục gốc với các biến sau:
    ```
-   NODE_ENV=development
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/product-review-system
+   # ===== JWT =====
    JWT_SECRET=your-super-secret-jwt-key
    JWT_REFRESH_SECRET=your-refresh-token-secret
+
+   # ===== MongoDB =====
+   MONGODB_USER=your-mongodb-username
+   MONGODB_PASSWORD=your-mongodb-password
+   MONGODB_HOST=localhost
+   MONGODB_PORT=27017
+   MONGODB_DB_NAME=review_db
+   MONGODB_AUTH_SOURCE=admin
    ```
 
 4. **Khởi động MongoDB**:
@@ -93,6 +99,11 @@ là seed thành công.
    ```bash
    node project/seed/database.js
    ```
+
+Sau khi seed database, bạn có thể đăng nhập bằng tài khoản admin sau để quản lý sản phẩm:
+
+   Email: admin@gmail.com
+   Mật khẩu: admin123
 
 ## Sử dụng
 
